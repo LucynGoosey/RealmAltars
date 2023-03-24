@@ -1,0 +1,4 @@
+name: RealmAltars
+version: '${project.version}'
+main: me.lucyn.realmaltars.RealmAltars
+api-version: 1.19
