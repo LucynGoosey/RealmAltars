@@ -111,7 +111,8 @@ public final class RealmAltars extends JavaPlugin implements Listener {
                 int tier = blessingIndex.get(cauldronList.get(e.getItemDrop().getLocation())).tier;
                 if(tiers[tier - 1].contains(e.getItemDrop().getItemStack().getType())) { //check if the sacrifice is of the right tier
                     e.getItemDrop().remove();//delete the item
-                    effectList.put(e.getPlayer().getName(), cauldronList.get(e.getItemDrop().getLocation()));//adds the player to the effect lista52
+                    effectList.put(e.getPlayer().getName(), cauldronList.get(e.getItemDrop().getLocation()));//adds the player to the effect list
+                    e.getPlayer().sendMessage("You have gained the " + effectList.get(e.getPlayer().getName()) + " blessing.");
                 }
 
         }
