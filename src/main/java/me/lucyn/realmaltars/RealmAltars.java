@@ -122,10 +122,10 @@ public final class RealmAltars extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!label.equalsIgnoreCase("realmaltars")) return super.onCommand(sender, command, label, args);
-        if(args.length == 0) return false;
+        if (args.length < 2) return false;
 
         if (args[0].equals("setcauldron")) {
-            if (args.length < 2) return false;
+
 
 
             String name = args[1];
@@ -136,6 +136,9 @@ public final class RealmAltars extends JavaPlugin implements Listener {
                 sender.sendMessage("You must be in a cauldron to set a cauldron.");
                 return false;
             }
+        } else if(args[0].equals("seteffect")){
+            effectList.put(sender.getName(), args[1]);
+
         }
         return false;
     }

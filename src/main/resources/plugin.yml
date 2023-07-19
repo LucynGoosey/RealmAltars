@@ -2,3 +2,7 @@ name: RealmAltars
 version: '${project.version}'
 main: me.lucyn.realmaltars.RealmAltars
 api-version: 1.20
+
+commands:
+  realmaltars:
+    usage: "/realmaltars [setcauldron|seteffect] [blessingName]"
