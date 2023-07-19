@@ -23,36 +23,34 @@ import java.util.*;
 
 public final class RealmAltars extends JavaPlugin implements Listener {
 
-    public Map<Location, String> cauldronList;
-    public Map<String, String> effectList;
-    public Map<String, BaseBlessing> blessingList;
-    ArrayList<ItemStack> tier1;
-    ArrayList<ItemStack> tier2;
-    ArrayList<ItemStack> tier3;
+    public Map<Location, String> cauldronList; //this list is used to store the locations of each blessings cauldron
+    public Map<String, String> effectList; //this list is used to keep track of which player has which blessing
+    public Map<String, BaseBlessing> blessingIndex; //this list is used to keep track of which blessing is which tier
+
     ArrayList[] tiers;
 
     @Override
     public void onEnable() {
         this.cauldronList = new HashMap<>();
-        // Plugin startup logic
 
-        tier1 = new ArrayList<>(Arrays.asList(new ItemStack(Material.DIAMOND, 1), new ItemStack(Material.IRON_BLOCK, 10), new ItemStack(Material.GOLD_BLOCK, 10), new ItemStack(Material.EMERALD, 10), new ItemStack(Material.GOLDEN_APPLE, 1)));
-        tier2 = new ArrayList<>(Arrays.asList(new ItemStack(Material.NETHERITE_INGOT, 1), new ItemStack(Material.DIAMOND_BLOCK, 1), new ItemStack(Material.DRAGON_HEAD, 8)));
-        tier3 = new ArrayList<>(Arrays.asList(new ItemStack(Material.NETHERITE_BLOCK, 1), new ItemStack(Material.NETHER_STAR, 1), new ItemStack(Material.BEACON, 1), new ItemStack(Material.ENCHANTED_GOLDEN_APPLE)));
+        ArrayList<ItemStack> tier1 = new ArrayList<>(Arrays.asList(new ItemStack(Material.DIAMOND, 1), new ItemStack(Material.IRON_BLOCK, 10), new ItemStack(Material.GOLD_BLOCK, 10), new ItemStack(Material.EMERALD, 10), new ItemStack(Material.GOLDEN_APPLE, 1)));
+        ArrayList<ItemStack> tier2 = new ArrayList<>(Arrays.asList(new ItemStack(Material.NETHERITE_INGOT, 1), new ItemStack(Material.DIAMOND_BLOCK, 1), new ItemStack(Material.DRAGON_HEAD, 8)));
+        ArrayList<ItemStack> tier3 = new ArrayList<>(Arrays.asList(new ItemStack(Material.NETHERITE_BLOCK, 1), new ItemStack(Material.NETHER_STAR, 1), new ItemStack(Material.BEACON, 1), new ItemStack(Material.ENCHANTED_GOLDEN_APPLE)));
 
-        tiers = new ArrayList[]{tier1, tier2, tier3};
+
+        tiers = new ArrayList[]{tier1, tier2, tier3}; //these are arrays of items that can be sacrificed for each tier of blessing
 
         effectList = new HashMap<>();
 
         Glide glide = new Glide(this);
-        EnchantedSteed enchantedSteed = new EnchantedSteed(this);
-
         getServer().getPluginManager().registerEvents(glide, this);
+
+        EnchantedSteed enchantedSteed = new EnchantedSteed(this);
         getServer().getPluginManager().registerEvents(enchantedSteed, this);
 
-        this.blessingList = new HashMap<>();
-        blessingList.put(glide.name , glide);
-        blessingList.put(enchantedSteed.name, enchantedSteed);
+        this.blessingIndex = new HashMap<>();
+        blessingIndex.put(glide.name , glide);
+        blessingIndex.put(enchantedSteed.name, enchantedSteed);
 
 
 
@@ -109,14 +107,13 @@ public final class RealmAltars extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e){
-        if(e.getItemDrop().getLocation().getBlock().getType() == Material.CAULDRON) {
-            if(cauldronList.containsKey(e.getItemDrop().getLocation())){
-                int tier = blessingList.get(cauldronList.get(e.getItemDrop().getLocation())).tier;
-                if(tiers[tier - 1].contains(e.getItemDrop().getItemStack().getType())) {
-                    e.getItemDrop().remove();
-                    effectList.put(e.getPlayer().getName(), cauldronList.get(e.getItemDrop().getLocation()));
+        if(e.getItemDrop().getLocation().getBlock().getType() == Material.CAULDRON && (cauldronList.containsKey(e.getItemDrop().getLocation()))){ //check to see if the cauldron is on the list of approved cauldrons
+                int tier = blessingIndex.get(cauldronList.get(e.getItemDrop().getLocation())).tier;
+                if(tiers[tier - 1].contains(e.getItemDrop().getItemStack().getType())) { //check if the sacrifice is of the right tier
+                    e.getItemDrop().remove();//delete the item
+                    effectList.put(e.getPlayer().getName(), cauldronList.get(e.getItemDrop().getLocation()));//adds the player to the effect lista52
                 }
-            }
+
         }
     }
 
@@ -124,27 +121,20 @@ public final class RealmAltars extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!label.equalsIgnoreCase("realmaltars")) return super.onCommand(sender, command, label, args);
-        if(args.length > 0) return false;
+        if(args.length == 0) return false;
 
-        switch(args[0]) {
-            case "setcauldron": {
-                if(args.length < 2) return false;
+        if (args[0].equals("setcauldron")) {
+            if (args.length < 2) return false;
 
 
-                String name = args[1];
-                if(((Player)sender).getLocation().getBlock().getType() == Material.CAULDRON) {
-                    cauldronList.put(((Player) sender).getLocation(), name);
-                    return true;
-                }
-
-                else{
-                       sender.sendMessage("You must be in a cauldron to set a cauldron.");
-                       return false;
-                }
-
+            String name = args[1];
+            if (((Player) sender).getLocation().getBlock().getType() == Material.CAULDRON) { // checks for /realmaltars setcauldron [blessingName] and adds it to the cauldron list
+                cauldronList.put(((Player) sender).getLocation(), name);
+                return true;
+            } else {
+                sender.sendMessage("You must be in a cauldron to set a cauldron.");
+                return false;
             }
-            default: {}
-
         }
         return false;
     }
