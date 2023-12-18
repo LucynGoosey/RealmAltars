@@ -1,8 +1,10 @@
 package me.lucyn.realmaltars;
 
+import me.lucyn.realmaltars.data.CauldronListener;
 import me.lucyn.realmaltars.effects.BaseBlessing;
 import me.lucyn.realmaltars.effects.EnchantedSteed;
 import me.lucyn.realmaltars.effects.Glide;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -12,8 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -23,34 +24,37 @@ import java.util.*;
 
 public final class RealmAltars extends JavaPlugin implements Listener {
 
-    public Map<Location, String> cauldronList; //this list is used to store the locations of each blessings cauldron
-    public Map<String, String> effectList; //this list is used to keep track of which player has which blessing
-    public Map<String, BaseBlessing> blessingIndex; //this list is used to keep track of which blessing is which tier
+    public Map<Location, Integer> cauldronList; //this list is used to store the locations of each blessings cauldron
+    public Map<Player, Integer> effectList; //this list is used to keep track of which player has which blessing
+    private Material[] tiers;
+    public BaseBlessing[] index = new BaseBlessing[12];
 
-    ArrayList[] tiers;
 
     @Override
     public void onEnable() {
         this.cauldronList = new HashMap<>();
 
-        ArrayList<ItemStack> tier1 = new ArrayList<>(Arrays.asList(new ItemStack(Material.DIAMOND, 1), new ItemStack(Material.IRON_BLOCK, 10), new ItemStack(Material.GOLD_BLOCK, 10), new ItemStack(Material.EMERALD, 10), new ItemStack(Material.GOLDEN_APPLE, 1)));
-        ArrayList<ItemStack> tier2 = new ArrayList<>(Arrays.asList(new ItemStack(Material.NETHERITE_INGOT, 1), new ItemStack(Material.DIAMOND_BLOCK, 1), new ItemStack(Material.DRAGON_HEAD, 8)));
-        ArrayList<ItemStack> tier3 = new ArrayList<>(Arrays.asList(new ItemStack(Material.NETHERITE_BLOCK, 1), new ItemStack(Material.NETHER_STAR, 1), new ItemStack(Material.BEACON, 1), new ItemStack(Material.ENCHANTED_GOLDEN_APPLE)));
+        Material tier1 = Material.GOLD_INGOT;
+        Material tier2 = Material.DIAMOND;
+        Material tier3 = Material.DIAMOND_BLOCK;
 
 
-        tiers = new ArrayList[]{tier1, tier2, tier3}; //these are arrays of items that can be sacrificed for each tier of blessing
+        setTiers(new Material[]{tier1, tier2, tier3}); //these are arrays of items that can be sacrificed for each tier of blessing
+
+        Glide glide = new Glide(this);
+        EnchantedSteed enchantedSteed = new EnchantedSteed(this);
+
+
+        getServer().getPluginManager().registerEvents(glide, this);
+        getServer().getPluginManager().registerEvents(enchantedSteed, this);
+
+        getServer().getPluginManager().registerEvents(new CauldronListener(this), this);
 
         effectList = new HashMap<>();
 
-        Glide glide = new Glide(this);
-        getServer().getPluginManager().registerEvents(glide, this);
+        index[0] = glide;
+        index[1] = enchantedSteed;
 
-        EnchantedSteed enchantedSteed = new EnchantedSteed(this);
-        getServer().getPluginManager().registerEvents(enchantedSteed, this);
-
-        this.blessingIndex = new HashMap<>();
-        blessingIndex.put(glide.name , glide);
-        blessingIndex.put(enchantedSteed.name, enchantedSteed);
 
 
 
@@ -75,51 +79,61 @@ public final class RealmAltars extends JavaPlugin implements Listener {
         }
     }
 
-    public void saveFiles() throws IOException {
+    public void saveID(Player player, int id) throws IOException {
+    YamlConfiguration y = new YamlConfiguration();
+    y.set("id", id);
+    y.save(new File(getDataFolder(), player.getUniqueId() + ".yml"));
+}
+
+
+public int loadID(Player player) throws IOException, InvalidConfigurationException {
         YamlConfiguration y = new YamlConfiguration();
-        for (Map.Entry<Location, String> entry : cauldronList.entrySet()) {
-            y.set(entry.getValue(), entry.getKey());
-        }
-        y.save(new File(getDataFolder(), "cauldronlist.yml"));
-        YamlConfiguration y2 = new YamlConfiguration();
-        for (Map.Entry<String, String> entry : effectList.entrySet()) {
-            y2.set(entry.getKey(), entry.getValue());
-        }
-        y2.save(new File(getDataFolder(), "effectlist.yml"));
+        y.load(new File(getDataFolder(), player.getUniqueId() + ".yml"));
+            return y.getInt("id");
+
     }
 
-    public void loadFiles() throws IOException, InvalidConfigurationException{
+
+    public void saveFiles() throws IOException {
+        YamlConfiguration y = new YamlConfiguration();
+        for (Map.Entry<Location, Integer> entry : cauldronList.entrySet()) {
+            y.set(entry.getValue().toString(), entry.getKey());
+        }
+        y.save(new File(getDataFolder(), "cauldronlist.yml"));
+    }
+
+    public void loadFiles() throws IOException, InvalidConfigurationException {
         YamlConfiguration y = new YamlConfiguration();
         y.load(new File(getDataFolder(), "cauldronlist.yml"));
         cauldronList = new HashMap<>();
         for (String key : y.getKeys(false)) {
-            cauldronList.put(y.getLocation(key), key);
+            cauldronList.put(y.getLocation(key), Integer.parseInt(key));
         }
 
-
-        YamlConfiguration y2 = new YamlConfiguration();
-        y2.load(new File(getDataFolder(), "effectlist.yml"));
-        effectList = new HashMap<>();
-        for (String key : y2.getKeys(false)) {
-            effectList.put(key, y2.getString(key));
-            }
     }
+
 
     @EventHandler
-    public void onDrop(PlayerDropItemEvent e){
-        if(e.getItemDrop().getLocation().getBlock().getType() == Material.CAULDRON && (cauldronList.containsKey(e.getItemDrop().getLocation()))){ //check to see if the cauldron is on the list of approved cauldrons
-                int tier = blessingIndex.get(cauldronList.get(e.getItemDrop().getLocation())).tier;
-                if(tiers[tier - 1].contains(e.getItemDrop().getItemStack().getType())) { //check if the sacrifice is of the right tier
-                    e.getItemDrop().remove();//delete the item
-                    effectList.put(e.getPlayer().getName(), cauldronList.get(e.getItemDrop().getLocation()));//adds the player to the effect list
-                    e.getPlayer().sendMessage("You have gained the " + effectList.get(e.getPlayer().getName()) + " blessing.");
-                }
-
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().sendMessage("a");
+        try{
+            event.getPlayer().sendMessage("b");
+            int id = loadID(event.getPlayer());
+            event.getPlayer().sendMessage("c");
+            effectList.put(event.getPlayer(), id);
+            event.getPlayer().sendMessage("d");
+            event.getPlayer().sendMessage(ChatColor.YELLOW + "Current Blessing: " + index[id].displayName);
         }
+        catch(Exception e) {
+            event.getPlayer().sendMessage("Z");
+            e.printStackTrace();
+        }
+
+
+
+
     }
-
-
-    @Override
+                       @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!label.equalsIgnoreCase("realmaltars")) return super.onCommand(sender, command, label, args);
         if (args.length < 2) return false;
@@ -128,19 +142,32 @@ public final class RealmAltars extends JavaPlugin implements Listener {
 
 
 
-            String name = args[1];
-            if (((Player) sender).getLocation().getBlock().getType() == Material.CAULDRON) { // checks for /realmaltars setcauldron [blessingName] and adds it to the cauldron list
-                cauldronList.put(((Player) sender).getLocation(), name);
+            int name = Integer.parseInt(args[1]);
+            if (((Player) sender).getTargetBlockExact(5).getType() == Material.HOPPER) { // checks for /realmaltars setcauldron [blessingName] and adds it to the cauldron list
+                cauldronList.put(((Player) sender).getTargetBlockExact(5).getLocation(), name);
+                try {
+                    saveFiles();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return true;
             } else {
                 sender.sendMessage("You must be in a cauldron to set a cauldron.");
                 return false;
             }
         } else if(args[0].equals("seteffect")){
-            effectList.put(sender.getName(), args[1]);
+            effectList.put((Player) sender, Integer.parseInt(args[1]));
 
         }
         return false;
+    }
+
+    public Material[] getTiers() {
+        return tiers;
+    }
+
+    public void setTiers(Material[] tiers) {
+        this.tiers = tiers;
     }
 }
 
