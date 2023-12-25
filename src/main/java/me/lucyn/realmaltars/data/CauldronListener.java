@@ -2,12 +2,10 @@ package me.lucyn.realmaltars.data;
 
 import me.lucyn.realmaltars.RealmAltars;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.IOException;
@@ -33,6 +31,10 @@ public class CauldronListener implements Listener {
             }
 
             if(plugin.getTiers()[plugin.index[id].tier - 1] == event.getItem().getItemStack().getType()) {
+
+                if(id == 11) {
+                    //luckperms integration needed
+                }
 
 
                 plugin.effectList.put(player, id);
@@ -71,7 +73,7 @@ public class CauldronListener implements Listener {
             event.getPlayer().sendMessage(ChatColor.YELLOW + "Current Blessing: " + plugin.index[id].displayName);
         }
         catch(Exception e) {
-
+            e.printStackTrace();
         }
 
 

@@ -1,9 +1,7 @@
 package me.lucyn.realmaltars;
 
 import me.lucyn.realmaltars.data.CauldronListener;
-import me.lucyn.realmaltars.effects.BaseBlessing;
-import me.lucyn.realmaltars.effects.EnchantedSteed;
-import me.lucyn.realmaltars.effects.Glide;
+import me.lucyn.realmaltars.effects.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,10 +41,12 @@ public final class RealmAltars extends JavaPlugin implements Listener {
 
         Glide glide = new Glide(this);
         EnchantedSteed enchantedSteed = new EnchantedSteed(this);
+        SecondWind secondWind = new SecondWind(this);
 
 
         getServer().getPluginManager().registerEvents(glide, this);
         getServer().getPluginManager().registerEvents(enchantedSteed, this);
+        getServer().getPluginManager().registerEvents(secondWind, this);
 
         getServer().getPluginManager().registerEvents(new CauldronListener(this), this);
 
@@ -54,9 +54,10 @@ public final class RealmAltars extends JavaPlugin implements Listener {
 
         index[0] = glide;
         index[1] = enchantedSteed;
+        index[2] = secondWind;
 
 
-
+        index[11] = new WallJump();
 
         try{
             loadFiles();
@@ -112,27 +113,6 @@ public int loadID(Player player) throws IOException, InvalidConfigurationExcepti
 
     }
 
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        event.getPlayer().sendMessage("a");
-        try{
-            event.getPlayer().sendMessage("b");
-            int id = loadID(event.getPlayer());
-            event.getPlayer().sendMessage("c");
-            effectList.put(event.getPlayer(), id);
-            event.getPlayer().sendMessage("d");
-            event.getPlayer().sendMessage(ChatColor.YELLOW + "Current Blessing: " + index[id].displayName);
-        }
-        catch(Exception e) {
-            event.getPlayer().sendMessage("Z");
-            e.printStackTrace();
-        }
-
-
-
-
-    }
                        @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!label.equalsIgnoreCase("realmaltars")) return super.onCommand(sender, command, label, args);

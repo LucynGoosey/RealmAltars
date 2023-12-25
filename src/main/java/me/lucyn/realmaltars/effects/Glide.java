@@ -1,7 +1,6 @@
 package me.lucyn.realmaltars.effects;
 
 import me.lucyn.realmaltars.RealmAltars;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
@@ -14,7 +13,7 @@ public class Glide extends BaseBlessing {
 
 
     public Glide(RealmAltars plugin) {
-        super(0, "Glide", 2);
+        super(0, "Glide", 1);
         this.plugin = plugin;
 
     }
