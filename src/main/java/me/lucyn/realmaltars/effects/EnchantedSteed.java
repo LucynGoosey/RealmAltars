@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+
 public class EnchantedSteed extends BaseBlessing {
     private final RealmAltars plugin;
     public EnchantedSteed(RealmAltars plugin) {

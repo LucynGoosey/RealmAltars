@@ -1,5 +1,6 @@
 package me.lucyn.realmaltars.effects;
 
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class BaseBlessing implements Listener {
@@ -13,5 +14,7 @@ public class BaseBlessing implements Listener {
         this.tier = tier;
         this.displayName = displayName;
     }
+
+
 
 }

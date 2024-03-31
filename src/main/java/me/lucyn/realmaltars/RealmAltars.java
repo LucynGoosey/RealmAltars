@@ -1,5 +1,6 @@
 package me.lucyn.realmaltars;
 
+import me.lucyn.fourthrealm.FourthRealmCore;
 import me.lucyn.realmaltars.data.CauldronListener;
 import me.lucyn.realmaltars.effects.*;
 import org.bukkit.ChatColor;
@@ -26,11 +27,13 @@ public final class RealmAltars extends JavaPlugin implements Listener {
     public Map<Player, Integer> effectList; //this list is used to keep track of which player has which blessing
     private Material[] tiers;
     public BaseBlessing[] index = new BaseBlessing[12];
+    public FourthRealmCore fourthRealmCore;
 
 
     @Override
     public void onEnable() {
         this.cauldronList = new HashMap<>();
+        fourthRealmCore = (FourthRealmCore) this.getServer().getPluginManager().getPlugin("FourthRealmCore");
 
         Material tier1 = Material.GOLD_INGOT;
         Material tier2 = Material.DIAMOND;
