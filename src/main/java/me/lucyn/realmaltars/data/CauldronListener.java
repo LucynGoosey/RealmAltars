@@ -18,26 +18,23 @@ public class CauldronListener implements Listener {
     public CauldronListener(RealmAltars plugin) {
         this.plugin = plugin;
     }
-
+    //hopper goes under the cauldron
     @EventHandler
     public void onPickup(InventoryPickupItemEvent event) {
-        Player player = plugin.getServer().getPlayer(Objects.requireNonNull(event.getItem().getThrower()));
-        if(plugin.cauldronList.containsKey(event.getInventory().getLocation())) {
-            int id = plugin.cauldronList.get(event.getInventory().getLocation());
+        Player player = plugin.getServer().getPlayer(Objects.requireNonNull(event.getItem().getThrower())); //get the player object of the thrower
+        if(plugin.cauldronList.containsKey(event.getInventory().getLocation())) { // checks if the location matches one on the cauldron list
+            int id = plugin.cauldronList.get(event.getInventory().getLocation()); //gets the blessing id from the location
 
-            if(plugin.effectList.containsKey(player) && plugin.effectList.get(player) == id) {
+            if(plugin.getBlessing(player) == id) { //checks if the player has the effect and cancels if they do
                 event.setCancelled(true);
                 return;
             }
 
             if(plugin.getTiers()[plugin.index[id].tier - 1] == event.getItem().getItemStack().getType()) {
 
-                if(id == 11) {
-                    //luckperms integration needed
-                }
 
 
-                plugin.effectList.put(player, id);
+
 
                 assert player != null;
                 player.sendTitle(ChatColor.GOLD + plugin.index[id].displayName + ChatColor.BOLD, "You gained a blessing.", 10, 100, 10);

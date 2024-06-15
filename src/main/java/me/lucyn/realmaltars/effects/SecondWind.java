@@ -32,8 +32,8 @@ public class SecondWind extends BaseBlessing {
 
         if(event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            if(plugin.effectList.containsKey(player) && plugin.effectList.get(player) == id && (!cooldowns.containsKey(player) || cooldowns.get(player) < System.currentTimeMillis()) && (player.getHealth() - event.getFinalDamage() <= 0)) {
-                event.setCancelled();
+            if(plugin.getBlessing(player) == id && (!cooldowns.containsKey(player) || cooldowns.get(player) < System.currentTimeMillis()) && (player.getHealth() - event.getFinalDamage() <= 0)) {
+                event.setCancelled(true);
 
                 player.playEffect(EntityEffect.TOTEM_RESURRECT);
 

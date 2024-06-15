@@ -21,10 +21,39 @@ import java.io.IOException;
 import java.util.*;
 
 
+/*
+TODO:
+Convert the following classes to use FourthRealmCore:
+
+CauldronListener
+
+figure out why the package isn't recognized but the object is.
+
+Animated tutorials
+
+Change blessings to not need a sacrifice, they should be changeable at will.
+
+Add the following blessings:
+Sonic Boom - Warden Blast
+Absorption - Dealing damage to entities grants health and saturation
+Progressive Overload - The longer a player is alive, the more hearts they gain, up to 10 hearts extra. Resets on death
+Dolphinborn - The player gains constant water breathing and dolphins grace.
+Quick Toss - All projectiles are launched considerably further, item drops included.
+Multi-Shot - All projectiles are multiplied
+Magic Lantern - Summon a light source that follows you around. Make it nameable
+Pioneer - Portable crafting and furnace
+Blink - teleport to where the player is looking
+Web Slinger - Launch cobwebs, swing from cobwebs
+Undead Army - Summon an army of zombies and skeletons
+
+ */
+
+
+
+
 public final class RealmAltars extends JavaPlugin implements Listener {
 
     public Map<Location, Integer> cauldronList; //this list is used to store the locations of each blessings cauldron
-    public Map<Player, Integer> effectList; //this list is used to keep track of which player has which blessing
     private Material[] tiers;
     public BaseBlessing[] index = new BaseBlessing[12];
     public FourthRealmCore fourthRealmCore;
@@ -53,21 +82,17 @@ public final class RealmAltars extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(new CauldronListener(this), this);
 
-        effectList = new HashMap<>();
 
         index[0] = glide;
         index[1] = enchantedSteed;
         index[2] = secondWind;
 
 
-        index[11] = new WallJump();
-
         try{
             loadFiles();
         }catch (Exception e) {
             getServer().getLogger().info("Data files not found. New ones will be created.");
             cauldronList = new HashMap<>();
-            effectList  = new HashMap<>();
 
         }
 
@@ -83,19 +108,9 @@ public final class RealmAltars extends JavaPlugin implements Listener {
         }
     }
 
-    public void saveID(Player player, int id) throws IOException {
-    YamlConfiguration y = new YamlConfiguration();
-    y.set("id", id);
-    y.save(new File(getDataFolder(), player.getUniqueId() + ".yml"));
-}
 
 
-public int loadID(Player player) throws IOException, InvalidConfigurationException {
-        YamlConfiguration y = new YamlConfiguration();
-        y.load(new File(getDataFolder(), player.getUniqueId() + ".yml"));
-            return y.getInt("id");
 
-    }
 
 
     public void saveFiles() throws IOException {
@@ -138,8 +153,8 @@ public int loadID(Player player) throws IOException, InvalidConfigurationExcepti
                 sender.sendMessage("You must be in a cauldron to set a cauldron.");
                 return false;
             }
-        } else if(args[0].equals("seteffect")){
-            effectList.put((Player) sender, Integer.parseInt(args[1]));
+       // } else if(args[0].equals("seteffect")){
+         //   effectList.put((Player) sender, Integer.parseInt(args[1]));
 
         }
         return false;
@@ -152,6 +167,11 @@ public int loadID(Player player) throws IOException, InvalidConfigurationExcepti
     public void setTiers(Material[] tiers) {
         this.tiers = tiers;
     }
+
+    public int getBlessing(Player player) {
+        return FourthRealmCore.playerData.get(player).blessingID;
+    }
+
 }
 
 

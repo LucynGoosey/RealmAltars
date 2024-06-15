@@ -21,7 +21,7 @@ public class EnchantedSteed extends BaseBlessing {
     @EventHandler
     public void onUse(PlayerInteractEvent event) {
 
-        if(plugin.effectList.containsKey(event.getPlayer()) && plugin.effectList.get(event.getPlayer()) == this.id) {
+        if(plugin.getBlessing(event.getPlayer()) == this.id) {
             if(!event.hasItem()) return;
             if(event.getItem().getType() != Material.SADDLE) return;
             ZombieHorse horse = (ZombieHorse) event.getPlayer().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.ZOMBIE_HORSE);

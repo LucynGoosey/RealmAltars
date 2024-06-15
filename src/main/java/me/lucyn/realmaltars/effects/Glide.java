@@ -21,7 +21,7 @@ public class Glide extends BaseBlessing {
     @EventHandler
     public void onCrouch(PlayerToggleSneakEvent event) {
 
-        if(plugin.effectList.containsKey(event.getPlayer()) && plugin.effectList.get(event.getPlayer()) == this.id && (event.isSneaking())) {
+        if(plugin.getBlessing(event.getPlayer()) == this.id && (event.isSneaking())) {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
