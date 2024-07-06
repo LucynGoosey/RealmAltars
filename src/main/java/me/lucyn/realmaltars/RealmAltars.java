@@ -27,8 +27,6 @@ Convert the following classes to use FourthRealmCore:
 
 CauldronListener
 
-figure out why the package isn't recognized but the object is.
-
 Animated tutorials
 
 Change blessings to not need a sacrifice, they should be changeable at will.
