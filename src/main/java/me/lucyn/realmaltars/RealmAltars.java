@@ -1,9 +1,7 @@
 package me.lucyn.realmaltars;
 
 import me.lucyn.fourthrealm.FourthRealmCore;
-import me.lucyn.realmaltars.data.CauldronListener;
 import me.lucyn.realmaltars.effects.*;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -11,9 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -25,7 +21,7 @@ import java.util.*;
 TODO:
 Convert the following classes to use FourthRealmCore:
 
-CauldronListener
+AltarListener
 
 Animated tutorials
 
@@ -43,13 +39,14 @@ Pioneer - Portable crafting and furnace
 Blink - teleport to where the player is looking
 Web Slinger - Launch cobwebs, swing from cobwebs
 Undead Army - Summon an army of zombies and skeletons
+Projectile Reflect - Spawn a shield that reflects projectiles
 
  */
 
 
 
 
-public final class RealmAltars extends JavaPlugin implements Listener {
+public final class RealmAltars extends JavaPlugin {
 
     public Map<Location, Integer> cauldronList; //this list is used to store the locations of each blessings cauldron
     private Material[] tiers;
@@ -78,12 +75,11 @@ public final class RealmAltars extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(enchantedSteed, this);
         getServer().getPluginManager().registerEvents(secondWind, this);
 
-        getServer().getPluginManager().registerEvents(new CauldronListener(this), this);
 
-
-        index[0] = glide;
-        index[1] = enchantedSteed;
-        index[2] = secondWind;
+        //initialize index
+        index[glide.id] = glide;
+        index[enchantedSteed.id] = enchantedSteed;
+        index[secondWind.id] = secondWind;
 
 
         try{
@@ -134,7 +130,7 @@ public final class RealmAltars extends JavaPlugin implements Listener {
         if(!label.equalsIgnoreCase("realmaltars")) return super.onCommand(sender, command, label, args);
         if (args.length < 2) return false;
 
-        if (args[0].equals("setcauldron")) {
+        if (args[0].equals("setaltar")) {
 
 
 
