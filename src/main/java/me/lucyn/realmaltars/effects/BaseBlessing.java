@@ -6,12 +6,12 @@ import org.bukkit.event.Listener;
 public class BaseBlessing implements Listener {
     public final int id;
     public final String displayName;
-    public final int tier;
 
 
-    public BaseBlessing(int id, String displayName, int tier) {
+
+
+    public BaseBlessing(int id, String displayName) {
         this.id = id;
-        this.tier = tier;
         this.displayName = displayName;
     }
 

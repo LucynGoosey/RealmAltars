@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 public class EnchantedSteed extends BaseBlessing {
     private final RealmAltars plugin;
     public EnchantedSteed(RealmAltars plugin) {
-        super(1, "Enchanted Steed", 3);
+        super(1, "Enchanted Steed");
         this.plugin = plugin;
     }
 

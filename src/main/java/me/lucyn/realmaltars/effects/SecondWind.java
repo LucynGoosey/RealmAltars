@@ -21,7 +21,7 @@ public class SecondWind extends BaseBlessing {
     private Map<Player, Long> cooldowns = new HashMap<>();
 
     public SecondWind(RealmAltars plugin) {
-        super(2, "Second Wind", 3);
+        super(2, "Second Wind");
         this.plugin = plugin;
     }
 

@@ -13,7 +13,7 @@ public class Glide extends BaseBlessing {
 
 
     public Glide(RealmAltars plugin) {
-        super(0, "Glide", 1);
+        super(0, "Glide");
         this.plugin = plugin;
 
     }
