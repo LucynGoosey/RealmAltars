@@ -7,4 +7,5 @@ depend: [FourthRealmCore]
 
 commands:
   realmaltars:
-    usage: "/realmaltars [setcauldron|seteffect] [blessingName]"
+    usage: "/realmaltars [setaltar|setblessing] [blessingName]"
++
