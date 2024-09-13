@@ -20,12 +20,11 @@ public class Glide extends BaseBlessing {
 
     @EventHandler
     public void onCrouch(PlayerToggleSneakEvent event) {
-
         if(plugin.getBlessing(event.getPlayer()) == this.id && (event.isSneaking())) {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 5, 0, true, false, false));
+                        event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 5, 2, true, false, false));
                         if (!event.getPlayer().isSneaking()) {
                             cancel();
                         }

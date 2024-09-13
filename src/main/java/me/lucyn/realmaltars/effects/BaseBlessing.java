@@ -1,13 +1,14 @@
 package me.lucyn.realmaltars.effects;
 
-import org.bukkit.Location;
+
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class BaseBlessing implements Listener {
     public final int id;
     public final String displayName;
-    public Location location;
+    public Block block;
 
 
 
@@ -16,8 +17,8 @@ public class BaseBlessing implements Listener {
         this.displayName = displayName;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setBlock(Block block) {
+        this.block = block;
     }
 
 

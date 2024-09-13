@@ -1,6 +1,7 @@
 package me.lucyn.realmaltars;
 
 import me.lucyn.fourthrealm.FourthRealmCore;
+import me.lucyn.fourthrealm.RealmPlayer;
 import me.lucyn.realmaltars.effects.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,7 +19,8 @@ import java.util.*;
 
 
 /*
-TODO:
+TODO
+
 Convert the following classes to use FourthRealmCore:
 
 AltarListener
@@ -49,7 +51,6 @@ Projectile Reflect - Spawn a shield that reflects projectiles
 public final class RealmAltars extends JavaPlugin {
 
     public Map<Location, Integer> cauldronList; //this list is used to store the locations of each blessings cauldron
-    private Material[] tiers;
     public BaseBlessing[] index = new BaseBlessing[12];
     public FourthRealmCore fourthRealmCore;
 
@@ -59,17 +60,12 @@ public final class RealmAltars extends JavaPlugin {
         this.cauldronList = new HashMap<>();
         fourthRealmCore = (FourthRealmCore) this.getServer().getPluginManager().getPlugin("FourthRealmCore");
 
-        Material tier1 = Material.GOLD_INGOT;
-        Material tier2 = Material.DIAMOND;
-        Material tier3 = Material.DIAMOND_BLOCK;
-
-
-        setTiers(new Material[]{tier1, tier2, tier3}); //these are arrays of items that can be sacrificed for each tier of blessing
 
         Glide glide = new Glide(this);
         EnchantedSteed enchantedSteed = new EnchantedSteed(this);
         SecondWind secondWind = new SecondWind(this);
 
+        getServer().getPluginManager().registerEvents(new AltarListener(this), this);
 
         getServer().getPluginManager().registerEvents(glide, this);
         getServer().getPluginManager().registerEvents(enchantedSteed, this);
@@ -132,8 +128,6 @@ public final class RealmAltars extends JavaPlugin {
 
         if (args[0].equals("setaltar")) {
 
-
-
             int name = Integer.parseInt(args[1]);
             if (((Player) sender).getTargetBlockExact(5).getType() == Material.HOPPER) { // checks for /realmaltars setcauldron [blessingName] and adds it to the cauldron list
                 cauldronList.put(((Player) sender).getTargetBlockExact(5).getLocation(), name);
@@ -147,20 +141,18 @@ public final class RealmAltars extends JavaPlugin {
                 sender.sendMessage("You must be in a cauldron to set a cauldron.");
                 return false;
             }
-       // } else if(args[0].equals("seteffect")){
-         //   effectList.put((Player) sender, Integer.parseInt(args[1]));
-
+        } else if(args[0].equals("seteffect")){
+            RealmPlayer rPlayer = fourthRealmCore.getPlayerData((Player) sender);
+            rPlayer.blessingID = Integer.parseInt(args[1]);
+            sender.sendMessage("Set effect to " + rPlayer.blessingID);
+            fourthRealmCore.setPlayerData(rPlayer);
+            return true;
         }
         return false;
     }
 
-    public Material[] getTiers() {
-        return tiers;
-    }
 
-    public void setTiers(Material[] tiers) {
-        this.tiers = tiers;
-    }
+
 
     public int getBlessing(Player player) {
         return FourthRealmCore.playerData.get(player).blessingID;
