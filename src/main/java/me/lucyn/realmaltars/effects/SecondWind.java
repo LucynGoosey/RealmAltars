@@ -38,7 +38,7 @@ public class SecondWind extends BaseBlessing {
                 player.playEffect(EntityEffect.TOTEM_RESURRECT);
 
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 20, 0));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 50, 4));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 280, 4));
                 player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 280, 1));
                 player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 280, 1));
 

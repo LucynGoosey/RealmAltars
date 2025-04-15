@@ -36,9 +36,8 @@ public class EnchantedSteed extends BaseBlessing {
     @EventHandler
     public void onDismount(EntityDismountEvent event) {
         if(event.getDismounted() instanceof ZombieHorse) {
+            ((Player) event.getEntity()).getInventory().addItem(((ZombieHorse) event.getDismounted()).getInventory().getSaddle());
             event.getDismounted().remove();
-            ((Player) event.getEntity()).getInventory().addItem(new ItemStack(Material.SADDLE));
-
         }
     }
 }

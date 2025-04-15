@@ -12,6 +12,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,9 +41,10 @@ Multi-Shot - All projectiles are multiplied
 Magic Lantern - Summon a light source that follows you around. Make it nameable
 Pioneer - Portable crafting and furnace
 Blink - teleport to where the player is looking
-Web Slinger - Launch cobwebs, swing from cobwebs
+Fireball - launch fireballs
 Undead Army - Summon an army of zombies and skeletons
 Projectile Reflect - Spawn a shield that reflects projectiles
+Shield Bash - Push entities back with your shield and damage them
 
  */
 
@@ -128,9 +131,9 @@ public final class RealmAltars extends JavaPlugin {
 
         if (args[0].equals("setaltar")) {
 
-            int name = Integer.parseInt(args[1]);
-            if (((Player) sender).getTargetBlockExact(5).getType() == Material.HOPPER) { // checks for /realmaltars setcauldron [blessingName] and adds it to the cauldron list
-                cauldronList.put(((Player) sender).getTargetBlockExact(5).getLocation(), name);
+            int id = Integer.parseInt(args[1]);
+            if (((Player) sender).getTargetBlockExact(5).getType() == Material.HOPPER) { // checks for /realmaltars setcauldron [blessingID] and adds it to the cauldron list
+                cauldronList.put(((Player) sender).getTargetBlockExact(5).getLocation(), id);
                 try {
                     saveFiles();
                 } catch (IOException e) {
@@ -141,7 +144,14 @@ public final class RealmAltars extends JavaPlugin {
                 sender.sendMessage("You must be in a cauldron to set a cauldron.");
                 return false;
             }
-        } else if(args[0].equals("seteffect")){
+        } else if(args[0].equals("setblessing")){
+
+            if(Integer.parseInt(args[1]) == 3) {
+                ((Player) sender).addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 1000, 1, true, false, false));
+
+            }
+
+
             RealmPlayer rPlayer = fourthRealmCore.getPlayerData((Player) sender);
             rPlayer.blessingID = Integer.parseInt(args[1]);
             sender.sendMessage("Set effect to " + rPlayer.blessingID);

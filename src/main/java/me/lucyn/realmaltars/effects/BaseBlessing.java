@@ -2,7 +2,6 @@ package me.lucyn.realmaltars.effects;
 
 
 import org.bukkit.block.Block;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class BaseBlessing implements Listener {
